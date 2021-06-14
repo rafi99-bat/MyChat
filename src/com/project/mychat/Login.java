@@ -11,6 +11,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -20,6 +22,8 @@ public class Login extends JFrame {
 	private JTextField txtAddress;
 	private JLabel lblAddress;
 	private JTextField txtPort;
+	
+	private LoginButton handle = new LoginButton();
 
 	public Login() {
 		try {
@@ -73,6 +77,7 @@ public class Login extends JFrame {
 		contentPane.add(lbPortDesc);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(handle);
 		btnLogin.setBounds(98, 286, 98, 26);
 		contentPane.add(btnLogin);
 	}
