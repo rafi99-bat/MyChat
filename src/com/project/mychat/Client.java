@@ -15,6 +15,8 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Client extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -24,6 +26,7 @@ public class Client extends JFrame {
 	private String name, address;
 	private int port;
 	private JTextField txtMessage;
+	private JTextArea txtHistory;
 
 	public Client(String name, String address, int port) {
 		setTitle("MyChat Client");
@@ -31,6 +34,7 @@ public class Client extends JFrame {
 		this.address = address;
 		this.port = port;
 		createWindow();
+		console("Attempting a connection to " + address + ": " + port + ", user: " + name);
 	}
 	
 	private void createWindow() {
@@ -53,18 +57,25 @@ public class Client extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JTextArea txtrHistory = new JTextArea();
-		txtrHistory.setEditable(false);
-		GridBagConstraints gbc_txtrHistory = new GridBagConstraints();
-		gbc_txtrHistory.insets = new Insets(0, 0, 5, 5);
-		gbc_txtrHistory.fill = GridBagConstraints.BOTH;
-		gbc_txtrHistory.gridx = 1;
-		gbc_txtrHistory.gridy = 1;
-		gbc_txtrHistory.gridwidth = 2;
-		gbc_txtrHistory.insets = new Insets(0, 5, 0, 0); 
-		contentPane.add(txtrHistory, gbc_txtrHistory);
+		txtHistory = new JTextArea();
+		txtHistory.setEditable(false);
+		GridBagConstraints gbc_txtHistory = new GridBagConstraints();
+		gbc_txtHistory.insets = new Insets(0, 0, 5, 5);
+		gbc_txtHistory.fill = GridBagConstraints.BOTH;
+		gbc_txtHistory.gridx = 1;
+		gbc_txtHistory.gridy = 1;
+		gbc_txtHistory.gridwidth = 2;
+		gbc_txtHistory.insets = new Insets(0, 5, 0, 0); 
+		contentPane.add(txtHistory, gbc_txtHistory);
 		
 		txtMessage = new JTextField();
+		txtMessage.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					send(txtMessage.getText());
+				}
+			}
+		});
 		GridBagConstraints gbc_txtMessage = new GridBagConstraints();
 		gbc_txtMessage.insets = new Insets(0, 0, 0, 5);
 		gbc_txtMessage.fill = GridBagConstraints.HORIZONTAL;
@@ -74,6 +85,11 @@ public class Client extends JFrame {
 		txtMessage.setColumns(10);
 		
 		JButton btnSend = new JButton("Send");
+		btnSend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				send(txtMessage.getText());
+			}
+		});
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
 		gbc_btnSend.insets = new Insets(0, 0, 0, 5);
 		gbc_btnSend.gridx = 2;
@@ -81,6 +97,20 @@ public class Client extends JFrame {
 		contentPane.add(btnSend, gbc_btnSend);
 		
 		setVisible(true);
+		
+		txtMessage.requestFocusInWindow();
+	}
+	
+	private void send(String message) {
+		if(message.equals("")) 
+			return;
+		message = name + ": " + message;
+		console(message);
+		txtMessage.setText("");
+	}
+	
+	public void console(String message) {
+		txtHistory.append(message + "\n\r");
 	}
 
 }
