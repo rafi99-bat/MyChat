@@ -20,10 +20,12 @@ public class Login extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtName;
 	private JTextField txtAddress;
-	private JLabel lblAddress;
 	private JTextField txtPort;
-	
-	private LoginButton handle = new LoginButton();
+	private JLabel lblName;
+	private JLabel lblAddress;
+	private JLabel lblPort;
+	private JLabel lblAddressDesc;
+	private JLabel lblPortDesc;
 
 	public Login() {
 		try {
@@ -46,7 +48,7 @@ public class Login extends JFrame {
 		contentPane.add(txtName);
 		txtName.setColumns(10);
 		
-		JLabel lblName = new JLabel("Name:");
+		lblName = new JLabel("Name:");
 		lblName.setBounds(127, 39, 39, 14);
 		contentPane.add(lblName);
 		
@@ -59,7 +61,7 @@ public class Login extends JFrame {
 		lblAddress.setBounds(114, 95, 65, 14);
 		contentPane.add(lblAddress);
 		
-		JLabel lblPort = new JLabel("Port:");
+		lblPort = new JLabel("Port:");
 		lblPort.setBounds(133, 164, 27, 14);
 		contentPane.add(lblPort);
 		
@@ -68,18 +70,30 @@ public class Login extends JFrame {
 		txtPort.setBounds(64, 180, 165, 20);
 		contentPane.add(txtPort);
 		
-		JLabel lbAddressDesc = new JLabel("(eg. 192.168.0.2)");
-		lbAddressDesc.setBounds(100, 133, 93, 14);
-		contentPane.add(lbAddressDesc);
+		lblAddressDesc = new JLabel("(eg. 192.168.0.2)");
+		lblAddressDesc.setBounds(100, 133, 93, 14);
+		contentPane.add(lblAddressDesc);
 		
-		JLabel lbPortDesc = new JLabel("(eg. 4420)");
-		lbPortDesc.setBounds(119, 203, 56, 14);
-		contentPane.add(lbPortDesc);
+		lblPortDesc = new JLabel("(eg. 4420)");
+		lblPortDesc.setBounds(119, 203, 56, 14);
+		contentPane.add(lblPortDesc);
 		
 		JButton btnLogin = new JButton("Login");
-		btnLogin.addActionListener(handle);
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = txtName.getText();
+				String address = txtAddress.getText();
+				int port = Integer.parseInt(txtPort.getText());
+				login(name, address, port);
+			}
+		});
 		btnLogin.setBounds(98, 286, 98, 26);
 		contentPane.add(btnLogin);
+	}
+	
+	private void login(String name, String address, int port) {
+		dispose();
+		System.out.println(name + ", " + address + ", " + port);
 	}
 
 	public static void main(String[] args) {
