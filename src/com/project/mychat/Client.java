@@ -5,8 +5,11 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
+
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
@@ -22,11 +25,11 @@ public class Client extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
-	
 	private String name, address;
 	private int port;
 	private JTextField txtMessage;
-	private JTextArea txtHistory;
+	private JTextArea history;
+	private DefaultCaret caret;
 
 	public Client(String name, String address, int port) {
 		setTitle("MyChat Client");
@@ -57,16 +60,19 @@ public class Client extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		txtHistory = new JTextArea();
-		txtHistory.setEditable(false);
-		GridBagConstraints gbc_txtHistory = new GridBagConstraints();
-		gbc_txtHistory.insets = new Insets(0, 0, 5, 5);
-		gbc_txtHistory.fill = GridBagConstraints.BOTH;
-		gbc_txtHistory.gridx = 1;
-		gbc_txtHistory.gridy = 1;
-		gbc_txtHistory.gridwidth = 2;
-		gbc_txtHistory.insets = new Insets(0, 5, 0, 0); 
-		contentPane.add(txtHistory, gbc_txtHistory);
+		history = new JTextArea();
+		history.setEditable(false);
+		JScrollPane scroll = new JScrollPane(history);
+		caret = (DefaultCaret)history.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		GridBagConstraints scrollConstraints = new GridBagConstraints();
+		scrollConstraints.insets = new Insets(0, 0, 5, 5);
+		scrollConstraints.fill = GridBagConstraints.BOTH;
+		scrollConstraints.gridx = 1;
+		scrollConstraints.gridy = 1;
+		scrollConstraints.gridwidth = 2;
+		scrollConstraints.insets = new Insets(0, 5, 0, 0); 
+		contentPane.add(scroll, scrollConstraints);
 		
 		txtMessage = new JTextField();
 		txtMessage.addKeyListener(new KeyAdapter() {
@@ -110,7 +116,8 @@ public class Client extends JFrame {
 	}
 	
 	public void console(String message) {
-		txtHistory.append(message + "\n\r");
+		history.append(message + "\n\r");
+		history.setCaretPosition(history.getDocument().getLength());
 	}
 
 }
