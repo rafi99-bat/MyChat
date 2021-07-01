@@ -95,15 +95,22 @@ public class Server implements Runnable{
 		
 	}
 	
+	private void send(String message, InetAddress address, int port) {
+		message += "/e/";
+		send(message.getBytes(), address, port);
+	}
+	
 	private void process(DatagramPacket packet) {
 		String string = new String(packet.getData());
 		if(string.startsWith("/c/")) {
 			// UUID id = UUID.randomUUID();
-			// int random = new SecureRandom().nextInt();
+			// int id = new SecureRandom().nextInt();
 			int id = UniqueIdentifier.getIdentifier();
 			System.out.println("Identifier : " + id);
 			clients.add(new ServerClient(string.substring(3, string.length()), packet.getAddress(), packet.getPort(), id));
 			System.out.println(string.substring(3, string.length()));
+			String ID = "/c/" + id;
+			send(ID, packet.getAddress(), packet.getPort());
 		} else if (string.startsWith("/m/")){
 			sendToAll(string);
 		} else {
