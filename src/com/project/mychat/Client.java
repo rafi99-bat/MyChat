@@ -15,7 +15,7 @@ public class Client {
 	private InetAddress ip;
 	private Thread send;
 	private int ID = -1;
-	
+
 	public Client(String name, String address, int port) {
 		this.name = name;
 		this.address = address;
@@ -74,11 +74,21 @@ public class Client {
 		};
 		send.start();
 	}
-	
+
+	public void close() {
+		new Thread() {
+			public void run() {
+				synchronized (socket) {
+					socket.close();
+				}
+			}
+		}.start();
+	}
+
 	public void setID(int ID) {
 		this.ID = ID;
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
