@@ -77,13 +77,13 @@ public class Server implements Runnable{
  							 break;
  						 }
  					 }
- 					 if (exists) disconnect(id, "kicked");
+ 					 if (exists) disconnect(id, true);
  					 else System.out.println("Client " + id + " does not exist! Check ID number.");
  				 } else {
  					for(int i = 0; i < clients.size(); i++) {
  						ServerClient c = clients.get(i);
  						if (name.equals(c.name)) {
- 							disconnect(c.getID(), "kicked");
+ 							disconnect(c.getID(), true);
  							break;
  						}
  					}
@@ -125,7 +125,7 @@ public class Server implements Runnable{
 						ServerClient c = clients.get(i);
 						if (!clientResponce.contains(clients.get(i).getID())) {
 							if (c.attempt >= MAX_ATTEMPTS) {
-								disconnect(c.getID(), "timed out");
+								disconnect(c.getID(), false);
 							} else {
 								c.attempt++;
 							}
@@ -216,10 +216,25 @@ public class Server implements Runnable{
 			String ID = "/c/" + id;
 			send(ID, packet.getAddress(), packet.getPort());
 		} else if (string.startsWith("/m/")){
-			sendToAll(string);
+			int id;
+		    String s_id = string.split("/m/|/s/")[1];
+		    String name = null;
+		    try {
+		               id = Integer.parseInt(s_id);
+		    } catch (NumberFormatException e) {
+		               //wrong format
+		    	return;
+		    }
+		    for (int i = 0; i < clients.size(); i++) {
+		        if (clients.get(i).getID() == id) {
+		        name = clients.get(i).name;
+		        break;
+		        }
+		    }
+		    if (name != null) sendToAll("/m/" + name + ": " + string.split("/s/|/e/")[1] + "/e/");
 		} else if (string.startsWith("/d/")) {
 			String id = string.split("/d/|/e/")[1];
-			disconnect( Integer.parseInt(id), "disconnected");
+			disconnect( Integer.parseInt(id), true);
 		} else if (string.startsWith("/i/")) {
 			clientResponce.add(Integer.parseInt(string.split("/i/|/e/")[1]));
 		} else {
@@ -229,13 +244,13 @@ public class Server implements Runnable{
 	
 	private void quit() {
 		for (int i = 0; i < clients.size(); i++) {
-			disconnect(clients.get(i).getID(), "disconnected");
+			disconnect(clients.get(i).getID(), true);
 		}
 		running = false;
 		socket.close();
 	}
 	
-	private void disconnect(int id, String status) {
+	private void disconnect(int id, boolean status) {
 		ServerClient c = null;
 		boolean existed = false;
 		for (int i = 0; i < clients.size(); i++) {
@@ -248,15 +263,12 @@ public class Server implements Runnable{
 		}
 		if (!existed) return;
 		String message = "";
-		if (status.equals("disconnected")) {
+		if (status) {
 			message = "Client " + c.name + " (" + c.getID() + ") @ " + c.address.toString() + " : " + c.port + " disconnected.";
-		} else if (status.equals("timed out")) {
-			message = "Client " + c.name + " (" + c.getID() + ") @ " + c.address.toString() + " : " + c.port + " timed out.";
 		} else {
-			message = "Client " + c.name + " (" + c.getID() + ") @ " + c.address.toString() + " : " + c.port + " kicked.";
+			message = "Client " + c.name + " (" + c.getID() + ") @ " + c.address.toString() + " : " + c.port + " timed out.";
 		}
 		System.out.println(message);
 	}
-	
 	
 }
