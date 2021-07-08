@@ -85,6 +85,11 @@ public class ClientWindow extends JFrame implements Runnable {
 		mnFile.add(mntmOnlineUsers);
 		
 		mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(JFrame.EXIT_ON_CLOSE);
+			}
+		});
 		mnFile.add(mntmExit);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
